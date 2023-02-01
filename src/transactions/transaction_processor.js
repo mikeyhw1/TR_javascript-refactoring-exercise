@@ -1,55 +1,30 @@
-var txr = [];
-
-function processTransactions(transActions) {
-
-    txr = [];
-
-    if (!validateTransactions(transActions)) {
-        throw new Error("Undefined collection of transactions")
-    }
+const processTransactions = transactions => {
+    if (transactions === undefined) throw new Error("Undefined collection of transactions")
 
     let txCount = {}
-
-    const numberOfTransactions = transActions.length;
-
-    for (var i = 0; i < numberOfTransactions; i++) {
-        const transaction = transActions[i];
-        txCount[transaction] ? txCount[transaction] += 1 : txCount[transaction] = 1;
-    }
-
-    txCount = sortByAmountThenName(txCount);
-
-    // Place them back in array for returning
-    Object.keys(txCount).forEach(function (key, index) {
-        txr[index] = `${key} ${txCount[key]}`;
-    });
-
-    return txr;
-}
-
-function sortByAmountThenName(txCount) {
-    let sortedKeys = Object.keys(txCount).sort(function sortingFunction(itemOne, itemTwo) {
-        return txCount[itemTwo] - txCount[itemOne] || itemOne > itemTwo || -(itemOne < itemTwo)
-    }
-    );
-
-    let sortedResults = {};
-    for (let objectKey of sortedKeys) {
-        sortedResults[objectKey] = txCount[objectKey];
-    }
-
-    return sortedResults;
-}
-
-
-function validateTransactions(transactions) {
-    if (transactions === undefined) {
-        return false;
-    }
-
-    return true;
+    transactions.sort().forEach(item => txCount[item] ? txCount[item] += 1 : txCount[item] = 1)
+    const sortedKeys = Object.keys(txCount).sort((a, b) => txCount[b] - txCount[a]);
+    return sortedKeys.map(item => `${item} ${txCount[item]}`);
 }
 
 module.exports = processTransactions;
 
-// test
+
+/*
+
+const processTransactions = transactions => {
+    if (transactions === undefined) throw new Error("Undefined collection of transactions")
+
+    let transactionsCount = {}
+    transactions.forEach(item => transactionsCount[item] ? transactionsCount[item] += 1 : transactionsCount[item] = 1)
+    const sortedKeys = sortByAmountThenName(transactionsCount);
+    return sortedKeys.map(item => `${item} ${transactionsCount[item]}`);
+}
+
+const sortByAmountThenName = transactionsCount =>
+    Object.keys(transactionsCount).sort((a, b) =>
+        (transactionsCount[a] === transactionsCount[b]) ? a.localeCompare(b) : transactionsCount[b] - transactionsCount[a]);
+
+module.exports = processTransactions;
+
+*/
